@@ -1,34 +1,42 @@
 const mineflayer = require('mineflayer')
 const http = require('http')
 
-// --- EL TRUCO PARA QUE RENDER NO SE APAGUE ---
-// Creamos un servidor web falso en el puerto 10000 (el que Render busca)
+// Esto es lo que mantiene a Render feliz y callado
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Bot vivo y saltando\n');
+  res.end('Bot Operativo\n');
 }).listen(10000); 
 
-const bot = mineflayer.createBot({
+const botArgs = {
   host: 'PovreZuela.aternos.me', 
   username: 'ElBotEterno',
-  version: '1.21.11' 
-})
+  version: '1.21.11'
+};
 
-bot.on('spawn', () => {
-  console.log('¡Bot en posición y saltando!');
-  bot.chat('¡Ya llegué, dejen de llorar!');
-  
-  // Salto inicial para confirmar que vive
-  bot.setControlState('jump', true);
-  setTimeout(() => bot.setControlState('jump', false), 1000);
+let bot;
 
-  // Cada 1 minuto salta y habla
-  setInterval(() => {
-    bot.chat('Sigo aquí vigilando... :v');
-    bot.setControlState('jump', true);
-    setTimeout(() => bot.setControlState('jump', false), 500);
-  }, 60000); 
-})
+function createBot() {
+  bot = mineflayer.createBot(botArgs);
 
-bot.on('kicked', (reason) => console.log('Me botaron por: ' + reason))
-bot.on('error', (err) => console.log('Error crítico: ' + err))
+  bot.on('spawn', () => {
+    console.log('¡Bot estable en el server!');
+    bot.chat('Ya me instalé, no me saquen :v');
+    
+    // Rutina de movimiento cada 1 minuto
+    setInterval(() => {
+      bot.setControlState('jump', true);
+      setTimeout(() => bot.setControlState('jump', false), 500);
+    }, 60000);
+  });
+
+  // Si lo sacan, esperamos 20 segundos antes de volver a entrar
+  // Esto evita que entre y salga a lo loco
+  bot.on('end', () => {
+    console.log('Me sacaron, esperando 20 segundos para reintentar...');
+    setTimeout(createBot, 20000);
+  });
+
+  bot.on('error', (err) => console.log('Error: ' + err));
+}
+
+createBot();
