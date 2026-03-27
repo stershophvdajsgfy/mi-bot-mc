@@ -1,12 +1,12 @@
 const mineflayer = require('mineflayer')
 const http = require('http')
 
-// --- EL ENGAÑO PARA RENDER ---
-// Esto crea una "página web" falsa para que Render no apague el bot
+// --- EL TRUCO PARA QUE RENDER NO SE APAGUE ---
+// Creamos un servidor web falso en el puerto 10000 (el que Render busca)
 http.createServer((req, res) => {
-  res.write('Bot encendido');
-  res.end();
-}).listen(8080);
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot vivo y saltando\n');
+}).listen(10000); 
 
 const bot = mineflayer.createBot({
   host: 'PovreZuela.aternos.me', 
@@ -16,8 +16,9 @@ const bot = mineflayer.createBot({
 
 bot.on('spawn', () => {
   console.log('¡Bot en posición y saltando!');
+  bot.chat('¡Ya llegué, dejen de llorar!');
   
-  // Salto inicial
+  // Salto inicial para confirmar que vive
   bot.setControlState('jump', true);
   setTimeout(() => bot.setControlState('jump', false), 1000);
 
