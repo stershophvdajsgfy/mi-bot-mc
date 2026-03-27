@@ -1,10 +1,10 @@
 const mineflayer = require('mineflayer')
 const http = require('http')
 
-// Esto es lo que mantiene a Render feliz y callado
+// Mantenemos a Render feliz sin que se apague
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Bot Operativo\n');
+  res.end('Bot Silencioso Operativo\n');
 }).listen(10000); 
 
 const botArgs = {
@@ -19,21 +19,21 @@ function createBot() {
   bot = mineflayer.createBot(botArgs);
 
   bot.on('spawn', () => {
-    console.log('¡Bot estable en el server!');
-    bot.chat('Ya me instalé, no me saquen :v');
+    // Ya no dice nada en el chat al entrar, solo sale en la consola de Render
+    console.log('Bot en el server (Silencioso)');
     
-    // Rutina de movimiento cada 1 minuto
+    // Solo salta cada 1 minuto para que no lo saquen, pero SIN HABLAR
     setInterval(() => {
       bot.setControlState('jump', true);
       setTimeout(() => bot.setControlState('jump', false), 500);
     }, 60000);
   });
 
-  // Si lo sacan, esperamos 20 segundos antes de volver a entrar
-  // Esto evita que entre y salga a lo loco
+  // Si lo sacan, esperamos 1 MINUTO entero antes de volver a entrar
+  // Así no spamea el chat de "ElBotEterno se unió al juego" cada rato
   bot.on('end', () => {
-    console.log('Me sacaron, esperando 20 segundos para reintentar...');
-    setTimeout(createBot, 20000);
+    console.log('Salió del server, esperando 60 segundos...');
+    setTimeout(createBot, 60000); 
   });
 
   bot.on('error', (err) => console.log('Error: ' + err));
