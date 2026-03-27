@@ -13,7 +13,7 @@ function antiAfk() {
     // También podemos hacer que salte
     bot.setControlState('jump', true);
     setTimeout(() => bot.setControlState('jump', false), 500);
-  }, 300000); // 300000 ms = 5 minutos
+  }, 60000); // 60000 ms = 1 minutos
 }
 
 bot.on('spawn', () => {
